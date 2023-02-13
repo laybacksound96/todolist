@@ -2,7 +2,7 @@ import { useRecoilValue } from "recoil";
 import { toDoState } from "./Atoms";
 
 import CreateTodo from "./CreateTodo";
-import { ToDo } from "./ToDo";
+import ToDo from "./ToDo";
 
 function ToDoList() {
   const toDos = useRecoilValue(toDoState);
