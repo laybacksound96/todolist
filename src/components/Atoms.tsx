@@ -11,10 +11,21 @@ export interface ITodo {
   id: number;
   category: Categories;
 }
-
+export interface INewCategory {
+  NewCategory: string;
+}
+export const NewCategoryState = atom<INewCategory[]>({
+  key: "newCategories",
+  default: [],
+});
 export const categoryState = atom<Categories>({
   key: "category",
   default: Categories.TO_DO,
+});
+
+export const categoryState2 = atom({
+  key: "category2",
+  default: [],
 });
 
 export const toDoState = atom<ITodo[]>({
