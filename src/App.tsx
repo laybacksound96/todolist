@@ -1,6 +1,13 @@
 import React from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useRecoilState } from "recoil";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "react-beautiful-dnd";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
+import { toDoState } from "./atoms";
 import { darkTheme } from "./theme";
 
 const GlobalStyle = createGlobalStyle`
@@ -98,33 +105,40 @@ const Wrapper = styled.div`
   height: 100vh;
 `;
 
-const toDos = ["a", "b", "c", "d", "e", "f"];
-
 function App() {
-  const onDragEnd = () => {};
+  const [toDos, setToDos] = useRecoilState(toDoState);
+  const onDragEnd = ({ destination, source, draggableId }: DropResult) => {
+    if (!destination) return;
+    setToDos((oldTodos) => {
+      const copyToDos = [...oldTodos];
+      copyToDos.splice(source.index, 1);
+      copyToDos.splice(destination?.index, 0, draggableId);
+      return copyToDos;
+    });
+  };
   return (
     <ThemeProvider theme={darkTheme}>
       <GlobalStyle />
-
       <DragDropContext onDragEnd={onDragEnd}>
         <Wrapper>
           <Boards>
-            <Droppable droppableId="1">
+            <Droppable droppableId="one">
               {(provided) => (
                 <Board ref={provided.innerRef} {...provided.droppableProps}>
-                  {toDos.map((todo, index) => (
-                    <Draggable draggableId={todo} index={index}>
+                  {toDos.map((toDo, index) => (
+                    <Draggable key={toDo} draggableId={toDo} index={index}>
                       {(provided) => (
                         <Card
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          {todo}
+                          {toDo}
                         </Card>
                       )}
                     </Draggable>
                   ))}
+                  {provided.placeholder}
                 </Board>
               )}
             </Droppable>
