@@ -1,7 +1,10 @@
-import React from "react";
-import { RecoilRoot } from "recoil";
-import { createGlobalStyle } from "styled-components";
-import TodoList from "./components/TodoList";
+import { useRecoilState } from "recoil";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
+import { toDoState } from "./atoms";
+import { darkTheme } from "./theme";
+
+import Board from "./Components/Board";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -59,21 +62,56 @@ body {
   font-weight: 300;
   font-family: 'Source Sans Pro', sans-serif;
   line-height: 1.2;
+  background-color: ${(props) => props.theme.subColor};
 }
 a {
   text-decoration:none;
   color:inherit;
 }
+
+`;
+
+const Boards = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  gap: 10px;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  width: 100vw;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 `;
 
 function App() {
+  const [toDos, setToDos] = useRecoilState(toDoState);
+  const onDragEnd = ({ destination, source, draggableId }: DropResult) => {
+    /*if (!destination) return;
+    setToDos((oldTodos) => { 
+      const copyToDos = [...oldTodos];
+      copyToDos.splice(source.index, 1);
+      copyToDos.splice(destination?.index, 0, draggableId);
+      return copyToDos;
+    }); */
+  };
   return (
-    <>
-      <RecoilRoot>
-        <GlobalStyle />
-        <TodoList />
-      </RecoilRoot>
-    </>
+    <ThemeProvider theme={darkTheme}>
+      <GlobalStyle />
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Wrapper>
+          <Boards>
+            {Object.keys(toDos).map((boardId) => (
+              <Board boardId={boardId} key={boardId} toDos={toDos[boardId]} />
+            ))}
+          </Boards>
+        </Wrapper>
+      </DragDropContext>
+    </ThemeProvider>
   );
 }
 
