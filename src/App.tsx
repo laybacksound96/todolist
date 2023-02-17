@@ -90,14 +90,17 @@ const Wrapper = styled.div`
 
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const onDragEnd = ({ destination, source, draggableId }: DropResult) => {
-    /*if (!destination) return;
-    setToDos((oldTodos) => { 
-      const copyToDos = [...oldTodos];
-      copyToDos.splice(source.index, 1);
-      copyToDos.splice(destination?.index, 0, draggableId);
-      return copyToDos;
-    }); */
+  const onDragEnd = (info: DropResult) => {
+    const { destination, draggableId, source } = info;
+    if (destination?.droppableId === source.droppableId) {
+      setToDos((oldTodos) => {
+        const boardCopy = [...oldTodos.key()];
+        copyToDos.splice(source.index, 1);
+        copyToDos.splice(destination?.index, 0, draggableId);
+        return copyToDos;
+      });
+      return;
+    }
   };
   return (
     <ThemeProvider theme={darkTheme}>
