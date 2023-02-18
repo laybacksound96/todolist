@@ -6,7 +6,7 @@ export const darkTheme: DefaultTheme = {
   cotrastColor: "#A5C9CA",
   accentColor: "#E7F6F2",
   cardColor: "white",
-  boardColor: "gray",
+  boardColor: "gainsboro",
 };
 
 // export const lightTheme: DefaultTheme = {
